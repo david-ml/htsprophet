@@ -26,8 +26,8 @@ from multiprocessing.dummy import Pool as ThreadPool
 
 #%%
 def hts(y, h = 1, nodes = [[2]], method='OLS', freq = 'D', transform = None, include_history = True, cap = None, capF = None, changepoints = None, \
-        n_changepoints = 25, yearly_seasonality = 'auto', weekly_seasonality = 'auto', daily_seasonality = 'auto', holidays = None, seasonality_prior_scale = 10.0, \
-        holidays_prior_scale = 10.0, changepoint_prior_scale = 0.05, mcmc_samples = 0, interval_width = 0.80, uncertainty_samples = 0, skipFitting = False, numThreads = 0):
+        n_changepoints = 25, changepoint_range = 0.8, yearly_seasonality = 'auto', weekly_seasonality = 'auto', daily_seasonality = 'auto', holidays = None, seasonality_prior_scale = 10.0, \
+        seasonality_mode = 'multiplicative', holidays_prior_scale = 10.0, changepoint_prior_scale = 0.05, mcmc_samples = 0, interval_width = 0.80, uncertainty_samples = 0, skipFitting = False, numThreads = 0):
     '''
     Parameters
     ----------------
@@ -210,33 +210,33 @@ def hts(y, h = 1, nodes = [[2]], method='OLS', freq = 'D', transform = None, inc
         for trainIndex, testIndex in tscv.split(y.iloc[:,0]):
             if numThreads != 0:
                 pool = ThreadPool(numThreads)
-                results = pool.starmap(fitForecast, zip([y.iloc[trainIndex, :]]*7, [len(testIndex)]*7, [sumMat]*7, [nodes]*7, methodList, [freq]*7, [include_history]*7, [cap]*7, [capF]*7, [changepoints]*7, [n_changepoints]*7, \
-                                    [yearly_seasonality]*7, [weekly_seasonality]*7, [daily_seasonality]*7, [holidays]*7, [seasonality_prior_scale]*7, [holidays_prior_scale]*7,\
+                results = pool.starmap(fitForecast, zip([y.iloc[trainIndex, :]]*7, [len(testIndex)]*7, [sumMat]*7, [nodes]*7, methodList, [freq]*7, [include_history]*7, [cap]*7, [capF]*7, [changepoints]*7, [n_changepoints]*7, [changepoint_range]*7,\
+                                    [yearly_seasonality]*7, [weekly_seasonality]*7, [daily_seasonality]*7, [holidays]*7, [seasonality_mode]*7, [seasonality_prior_scale]*7, [holidays_prior_scale]*7,\
                                     [changepoint_prior_scale]*7, [mcmc_samples]*7, [interval_width]*7, [uncertainty_samples]*7,  [boxcoxT]*7, [skipFitting]*7))
                 pool.close()
                 pool.join()
                 ynew1, ynew2, ynew3, ynew4, ynew5, ynew6, ynew7 = results
             else:
-                ynew1 = fitForecast(y.iloc[trainIndex, :], len(testIndex), sumMat, nodes, methodList[0], freq, include_history, cap, capF, changepoints, n_changepoints, \
-                                    yearly_seasonality, weekly_seasonality, daily_seasonality, holidays, seasonality_prior_scale, holidays_prior_scale,\
+                ynew1 = fitForecast(y.iloc[trainIndex, :], len(testIndex), sumMat, nodes, methodList[0], freq, include_history, cap, capF, changepoints, n_changepoints, changepoint_range,\
+                                    yearly_seasonality, weekly_seasonality, daily_seasonality, holidays, seasonality_mode, seasonality_prior_scale, holidays_prior_scale,\
                                     changepoint_prior_scale, mcmc_samples, interval_width, uncertainty_samples, boxcoxT, skipFitting)
-                ynew2 = fitForecast(y.iloc[trainIndex, :], len(testIndex), sumMat, nodes, methodList[1], freq, include_history, cap, capF, changepoints, n_changepoints, \
-                                    yearly_seasonality, weekly_seasonality, daily_seasonality, holidays, seasonality_prior_scale, holidays_prior_scale,\
+                ynew2 = fitForecast(y.iloc[trainIndex, :], len(testIndex), sumMat, nodes, methodList[1], freq, include_history, cap, capF, changepoints, n_changepoints, changepoint_range,\
+                                    yearly_seasonality, weekly_seasonality, daily_seasonality, holidays, seasonality_mode, seasonality_prior_scale, holidays_prior_scale,\
                                     changepoint_prior_scale, mcmc_samples, interval_width, uncertainty_samples, boxcoxT, skipFitting)
-                ynew3 = fitForecast(y.iloc[trainIndex, :], len(testIndex), sumMat, nodes, methodList[2], freq, include_history, cap, capF, changepoints, n_changepoints, \
-                                    yearly_seasonality, weekly_seasonality, daily_seasonality, holidays, seasonality_prior_scale, holidays_prior_scale,\
+                ynew3 = fitForecast(y.iloc[trainIndex, :], len(testIndex), sumMat, nodes, methodList[2], freq, include_history, cap, capF, changepoints, n_changepoints, changepoint_range,\
+                                    yearly_seasonality, weekly_seasonality, daily_seasonality, holidays, seasonality_mode, seasonality_prior_scale, holidays_prior_scale,\
                                     changepoint_prior_scale, mcmc_samples, interval_width, uncertainty_samples, boxcoxT, skipFitting)
-                ynew4 = fitForecast(y.iloc[trainIndex, :], len(testIndex), sumMat, nodes, methodList[3], freq, include_history, cap, capF, changepoints, n_changepoints, \
-                                    yearly_seasonality, weekly_seasonality, daily_seasonality, holidays, seasonality_prior_scale, holidays_prior_scale,\
+                ynew4 = fitForecast(y.iloc[trainIndex, :], len(testIndex), sumMat, nodes, methodList[3], freq, include_history, cap, capF, changepoints, n_changepoints, changepoint_range,\
+                                    yearly_seasonality, weekly_seasonality, daily_seasonality, holidays, seasonality_mode, seasonality_prior_scale, holidays_prior_scale,\
                                     changepoint_prior_scale, mcmc_samples, interval_width, uncertainty_samples, boxcoxT, skipFitting)
-                ynew5 = fitForecast(y.iloc[trainIndex, :], len(testIndex), sumMat, nodes, methodList[4], freq, include_history, cap, capF, changepoints, n_changepoints, \
-                                    yearly_seasonality, weekly_seasonality, daily_seasonality, holidays, seasonality_prior_scale, holidays_prior_scale,\
+                ynew5 = fitForecast(y.iloc[trainIndex, :], len(testIndex), sumMat, nodes, methodList[4], freq, include_history, cap, capF, changepoints, n_changepoints, changepoint_range,\
+                                    yearly_seasonality, weekly_seasonality, daily_seasonality, holidays, seasonality_mode, seasonality_prior_scale, holidays_prior_scale,\
                                     changepoint_prior_scale, mcmc_samples, interval_width, uncertainty_samples, boxcoxT, skipFitting)
-                ynew6 = fitForecast(y.iloc[trainIndex, :], len(testIndex), sumMat, nodes, methodList[5], freq, include_history, cap, capF, changepoints, n_changepoints, \
-                                    yearly_seasonality, weekly_seasonality, daily_seasonality, holidays, seasonality_prior_scale, holidays_prior_scale,\
+                ynew6 = fitForecast(y.iloc[trainIndex, :], len(testIndex), sumMat, nodes, methodList[5], freq, include_history, cap, capF, changepoints, n_changepoints, changepoint_range,\
+                                    yearly_seasonality, weekly_seasonality, daily_seasonality, holidays, seasonality_mode, seasonality_prior_scale, holidays_prior_scale,\
                                     changepoint_prior_scale, mcmc_samples, interval_width, uncertainty_samples, boxcoxT, skipFitting)
-                ynew7 = fitForecast(y.iloc[trainIndex, :], len(testIndex), sumMat, nodes, methodList[6], freq, include_history, cap, capF, changepoints, n_changepoints, \
-                                    yearly_seasonality, weekly_seasonality, daily_seasonality, holidays, seasonality_prior_scale, holidays_prior_scale,\
+                ynew7 = fitForecast(y.iloc[trainIndex, :], len(testIndex), sumMat, nodes, methodList[6], freq, include_history, cap, capF, changepoints, n_changepoints, changepoint_range,\
+                                    yearly_seasonality, weekly_seasonality, daily_seasonality, holidays, seasonality_mode, seasonality_prior_scale, holidays_prior_scale,\
                                     changepoint_prior_scale, mcmc_samples, interval_width, uncertainty_samples, boxcoxT, skipFitting)
 #                    
             for key in ynew1.keys():
@@ -252,8 +252,8 @@ def hts(y, h = 1, nodes = [[2]], method='OLS', freq = 'D', transform = None, inc
         ##
         choices = [np.mean(MASE1), np.mean(MASE2), np.mean(MASE3), np.mean(MASE4), np.mean(MASE5), np.mean(MASE6), np.mean(MASE7)]
         choice = methodList[choices.index(min(choices))]
-        ynew = fitForecast(y, h, sumMat, nodes, choice, freq, include_history, cap, capF, changepoints, n_changepoints, \
-                           yearly_seasonality, weekly_seasonality, daily_seasonality, holidays, seasonality_prior_scale, holidays_prior_scale,\
+        ynew = fitForecast(y, h, sumMat, nodes, choice, freq, include_history, cap, capF, changepoints, n_changepoints, changepoint_range, \
+                           yearly_seasonality, weekly_seasonality, daily_seasonality, holidays, seasonality_mode, seasonality_prior_scale, holidays_prior_scale,\
                            changepoint_prior_scale, mcmc_samples, interval_width, uncertainty_samples, boxcoxT, skipFitting)
         print(choice)
     
@@ -267,8 +267,8 @@ def hts(y, h = 1, nodes = [[2]], method='OLS', freq = 'D', transform = None, inc
                 y[i] = theDictionary[key].yhat
                 i += 1
         sumMat = SummingMat(nodes)
-        ynew = fitForecast(y, h, sumMat, nodes, method, freq, include_history, cap, capF, changepoints, n_changepoints, \
-                           yearly_seasonality, weekly_seasonality, daily_seasonality, holidays, seasonality_prior_scale, holidays_prior_scale,\
+        ynew = fitForecast(y, h, sumMat, nodes, method, freq, include_history, cap, capF, changepoints, n_changepoints, changepoint_range, \
+                           yearly_seasonality, weekly_seasonality, daily_seasonality, holidays, seasonality_mode, seasonality_prior_scale, holidays_prior_scale,\
                            changepoint_prior_scale, mcmc_samples, interval_width, uncertainty_samples, boxcoxT, skipFitting)
     ##
     # Inverse boxcox the data
